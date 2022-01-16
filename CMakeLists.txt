@@ -106,7 +106,8 @@ target_link_libraries(cquery PRIVATE reproc::reproc)
 
 # See cmake/FindClang.cmake
 find_package(Clang 6.0.0)
-target_link_libraries(cquery PRIVATE Clang::Clang)
+# target_link_libraries(cquery PRIVATE Clang::Clang)
+target_link_libraries(cquery PRIVATE clang)
 
 # Enable threading support
 set(THREADS_PREFER_PTHREAD_FLAG ON)
