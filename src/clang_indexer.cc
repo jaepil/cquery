@@ -149,6 +149,9 @@ lsSymbolKind GetSymbolKind(CXIdxEntityKind kind) {
       return lsSymbolKind::TypeAlias;
     case CXIdxEntity_CXXInterface:
       return lsSymbolKind::Struct;
+
+    case CXIdxEntity_CXXConcept:
+      return lsSymbolKind::Struct;
   }
 
   return lsSymbolKind::Unknown;
@@ -1828,6 +1831,7 @@ void OnIndexDeclaration(CXClientData client_data, const CXIdxDeclInfo* decl) {
     case CXIdxEntity_Enum:
     case CXIdxEntity_Union:
     case CXIdxEntity_Struct:
+    case CXIdxEntity_CXXConcept:
     case CXIdxEntity_CXXInterface:
     case CXIdxEntity_CXXClass: {
       Range spell = cursor.get_spell();
@@ -2176,6 +2180,7 @@ void OnIndexReference(CXClientData client_data, const CXIdxEntityRefInfo* ref) {
     case CXIdxEntity_Enum:
     case CXIdxEntity_Union:
     case CXIdxEntity_Struct:
+    case CXIdxEntity_CXXConcept:
     case CXIdxEntity_CXXClass: {
       referenced = referenced.template_specialization_to_template_definition();
       IndexType* ref_type =
@@ -2251,8 +2256,8 @@ optional<std::vector<std::unique_ptr<IndexFile>>> Parse(
   int index_result = clang_indexTranslationUnit(
       index_action, &param, &callback, sizeof(IndexerCallbacks),
       CXIndexOpt_IndexFunctionLocalSymbols |
-          CXIndexOpt_SkipParsedBodiesInSession |
-          CXIndexOpt_IndexImplicitTemplateInstantiations,
+          CXIndexOpt_SkipParsedBodiesInSession,
+          // CXIndexOpt_IndexImplicitTemplateInstantiations,
       tu->cx_tu);
   if (index_result != CXError_Success) {
     LOG_S(ERROR) << "Indexing " << *file

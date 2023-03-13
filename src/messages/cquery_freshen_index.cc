@@ -56,7 +56,7 @@ struct Handler_CqueryFreshenIndex : BaseMessageHandler<In_CqueryFreshenIndex> {
           q.push(&file);
         else
           path_to_file[file.def->path] = &file;
-        for (const std::string& dependency : file.def->dependencies)
+        for (auto dependency : file.def->dependencies)
           graph[dependency].push_back(file.def->path);
       }
 
